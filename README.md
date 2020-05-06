@@ -48,3 +48,4 @@ Add the following to `/etc/rc.local` right above the `exit 0` line
 ```
 su - pi -c "screen -dm -S ledvis -c /home/pi/ledvis/pi.screenrc"
 ```
+ 
