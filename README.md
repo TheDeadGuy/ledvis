@@ -1,7 +1,9 @@
 # ledvis
+```
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
 Raspberry Pi LED music visualizer. Use `screen -c pi.screenrc` to run.
+```
 
 `sudo` is needed because this we are interfacing with the GPIO and PWM through the rpi_ws281x library.
 
