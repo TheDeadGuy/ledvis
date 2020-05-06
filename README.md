@@ -1,11 +1,13 @@
 # ledvis
+git clone https://github.com/TheDeadGuy/ledvis.git
+cd ledvis
 Raspberry Pi LED music visualizer. Use `screen -c pi.screenrc` to run.
 
 `sudo` is needed because this we are interfacing with the GPIO and PWM through the rpi_ws281x library.
 
 ## Requirments
 
-This is meant to run on a Raspberry Pi. I used a Model 3 B+.
+This is meant to run on a Raspberry Pi.
 
  * rpi_ws281x
  * adafruit-ads1x15
@@ -28,7 +30,7 @@ And run this to install the other dependencies
 ```
 pip install adafruit-ads1x15 --user	# install the ADS1015 i2c library
 pip3 install Flask	--user			# get Flask (best to use python3)
-sudo apt install screen python-matplotlib		# get screen
+sudo apt install screen python-matplotlib python-pyaudio		# get screen
 ```
 
 ## Repo Organization
