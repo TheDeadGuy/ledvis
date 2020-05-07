@@ -67,7 +67,7 @@ class StripL:
         self.strip2 = Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL) # IZZY: strip2 disabled
         self.strip2.begin() # IZZY: strip2 disabled
 
-        self.prev_write_time = time.time()
+        #self.prev_write_time = time.time()
 
     def set_brightness(self, brightness):
         self.strip2.setBrightness(brightness) # IZZY: strip2 disabled
@@ -80,11 +80,11 @@ class StripL:
 
         # we require a sleep after each each write for the strips to finish updating
         # make sure we've slept enough since the last write
-        sleep_time = LED_WRITE_DELAY - (time.time() - self.prev_write_time)
-        if sleep_time > 0: time.sleep(sleep_time)
+        #sleep_time = LED_WRITE_DELAY - (time.time() - self.prev_write_time)
+        #if sleep_time > 0: time.sleep(sleep_time)
 
-        time.sleep(LED_WRITE_DELAY) # IZZY: strip2 disabled
+        time.sleep(LED_WRITE_DELAY - 0.00155) # IZZY: strip2 disabled
         self.strip2.show() # IZZY: strip2 disabled
 
-        self.prev_write_time = time.time() # save for the next loop
+        #self.prev_write_time = time.time() # save for the next loop
 

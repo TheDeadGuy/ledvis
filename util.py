@@ -41,7 +41,7 @@ class CircularBuffer:
 			self.index = end
 
 
-	def get(self):
+	def get(self, data):
 		return np.concatenate([self.array[self.index:], self.array[:self.index]])
 
 
