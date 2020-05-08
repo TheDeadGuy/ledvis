@@ -14,8 +14,11 @@ class VisualizerBase:
         self.name = self.__class__.__name__
         self.required_samples = DEFAULT_REQUIRED_SAMPLES # how many samples do we want to receive
 
-    def visualize(self, sample_array):
-        return np.zeros([LED_1_COUNT, 3], dtype=int)
+    def visualize(self, sample_array, channel):
+        if channel == 1:
+            return np.zeros([LED_1_COUNT, 3], dtype=int)
+        elif channel == 2:
+            return np.zeros([LED_2_COUNT, 3], dtype=int)
 
 
 class FFTVisualizerBase(VisualizerBase):
@@ -54,41 +57,51 @@ class ExampleVisualizer(VisualizerBase):
         VisualizerBase.__init__(self)
         self.bounder = Bounder()
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         self.bounder.update(sample_array) # update the max and min observed sample
         m = sample_array[-1] # pull out the most recent sample
         m = self.bounder.normalize(most_recent_sample) # normalize it to be from 0 to 1
 
         # make an array with LED_1_COUNT elements, where one entry is 255 and the rest are zeros.
-        color_channel = 255 * (np.arrange(LED_1_COUNT) == int(m * LED_1_COUNT))
+        if channel == 1:
+            color_channel = 255 * (np.arrange(LED_1_COUNT) == int(m * LED_1_COUNT))
+        elif channel == 2:
+            color_channel = 255 * (np.arrange(LED_2_COUNT) == int(m * LED_2_COUNT))
+
 
         # there are three color channels. repeating the same array three times yields white
         return np.vstack([color_channel, color_channel, color_channel]).T
 
 
 class StripsOff(VisualizerBase):
-    def visualize(self, sample_array):
-        color_array = np.zeros([LED_1_COUNT,3], dtype=int)
+    def visualize(self, sample_array, channel):
+        if channel == 1:
+            color_array = np.zeros([LED_1_COUNT,3], dtype=int)
+        elif channel == 2:
+            color_array = np.zeros([LED_2_COUNT,3], dtype=int)
         return color_array
 
 
 class VooMeter(VisualizerBase):
-    def __init__(self, color=np.array([255, 0, 240]), mask_maker=masker.bottom_upV):
+    def __init__(self, color=np.array([120, 200, 100]), mask_maker=masker.bottom_upV):
         VisualizerBase.__init__(self)
-        self.color = np.random.randint(low=0, high=255, size=3)
+        if VOOMETER_RAND == 1:
+            self.color = np.random.randint(low=0, high=255, size=3)
+        elif VOOMETER_RAND == 0:
+            self.color = np.array([VOOMETER_BLUE,VOOMETER_RED,VOOMETER_GREEN])
         self.mask_maker = mask_maker
         self.smoother = SplitExponentialMovingAverage(0.2, 0.7)
         self.bounder = Bounder()
         self.bounder.L_contraction_rate = 0.999
         self.bounder.L_contraction_rate = 0.9
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
 
             m = np.max(sample_array[-300:]) # get the maximum amplitude
             m = self.bounder.update_and_normalize(m) # normalize the amplitude to [0,1]
             m = self.smoother.smooth(m) # and smooth it
 
-            color_mask = self.mask_maker(m) # create a mask of which LEDS to turn on
+            color_mask = self.mask_maker(m, channel) # create a mask of which LEDS to turn on
 
             # create a color array to be sent to the LED_writer
             return color_mask * self.color
@@ -109,7 +122,7 @@ class FFTRainbow(FFTVisualizerBase):
         self.required_samples = 3500
         self.fft_setup(0, 1500, 3500)
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         fft = self.fft(sample_array)
         n = fft.shape[0]
         n -= n % self.num_bins # make n divisible by the number of bins
@@ -135,14 +148,18 @@ class FFT(FFTVisualizerBase):
         self.bounder.U_contraction_rate = 0.999
         self.required_samples = 3000
         self.fft_setup(0, 900, 3000)
-        self.half_led_count = int(LED_1_COUNT * 0.57)
+        #self.half_led_count = int(LED_1_COUNT * 0.57)
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
+
+        if channel == 1:
+            self.half_led_count = int(LED_1_COUNT * 0.57)
+        elif channel == 2:
+            self.half_led_count = int(LED_2_COUNT * 0.57)
         color_array = np.zeros([self.half_led_count, 3])
         # color_array[:,0] = np.linspace(0, 40, LED_1_COUNT) # G
         color_array[:,1] = np.linspace(0, 160, self.half_led_count) # R
         color_array[:,2] = np.linspace(160, 0, self.half_led_count) # B
-
 
         fft = self.fft(sample_array)
         smoothed_fft = np.convolve(fft , self.g)
@@ -153,7 +170,10 @@ class FFT(FFTVisualizerBase):
 
         color_array *= interped_fft[:,None]
 
-        colors = np.zeros([LED_1_COUNT,3])
+        if channel == 1:
+            colors = np.zeros([LED_1_COUNT,3])
+        elif channel == 2:
+            colors = np.zeros([LED_2_COUNT,3])
         colors[-self.half_led_count:,:] += color_array
         colors[:self.half_led_count,:] += np.flipud(color_array)
 
@@ -172,7 +192,7 @@ class BlobSlider(VisualizerBase):
         self.smoother = SplitExponentialMovingAverage(0.2,0.7)
         self.init_max_amp = 100
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         m = np.max(sample_array[-300:])
         m = self.bounder.update_and_normalize(m)
         m = self.smoother.smooth(m)
@@ -191,10 +211,17 @@ class BlobSlider(VisualizerBase):
             self.blob_list.append(new_blob)
 
         # remove blobs that have gone off the end of the strip
-        self.blob_list = [b for b in self.blob_list if b['pos'] < LED_1_COUNT + self.blob_buffer]
+        if channel == 1:
+            self.blob_list = [b for b in self.blob_list if b['pos'] < LED_1_COUNT + self.blob_buffer]
 
-        color_array = np.zeros([LED_1_COUNT, 3])
-        x = np.arange(LED_1_COUNT)
+            color_array = np.zeros([LED_1_COUNT, 3])
+            x = np.arange(LED_1_COUNT)
+        elif channel == 2:
+            self.blob_list = [b for b in self.blob_list if b['pos'] < LED_2_COUNT + self.blob_buffer]
+
+            color_array = np.zeros([LED_2_COUNT, 3])
+            x = np.arange(LED_2_COUNT)
+
         for blob in self.blob_list:
             blob['pos'] += dt * blob['speed']*(0.2 + m**2) # move the blobs
             color_array = np.maximum(color_array, np.outer(gaussian(x, blob['pos'], 2.5), blob['color']))
@@ -217,19 +244,36 @@ class Zoom(VisualizerBase):
         }
         self.stripe_list.append(new_stripe)
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         m = self.bounder.update_and_normalize(np.max(sample_array[-10]))
 
         new_time = time.time()
         dt = new_time - self.prev_time
         self.prev_time = new_time
 
-        colors = np.zeros([LED_1_COUNT, 3], dtype=int)
+        if channel == 1:
+            if (LED_1_COUNT % 2) == 0:
+                LED_1COUNT_ADJ = LED_1_COUNT
+            else:
+                LED_1COUNT_ADJ = LED_1_COUNT + 1
+            colors = np.zeros([LED_1COUNT_ADJ, 3], dtype=int)
+            i = 0
+            count = 0
+            center = int(np.ceil(LED_1COUNT_ADJ/2))
+            top = LED_1COUNT_ADJ - center
+        elif channel == 2:
+            if (LED_2_COUNT % 2) == 0:
+                LED_2COUNT_ADJ = LED_2_COUNT
+            else:
+                LED_2COUNT_ADJ = LED_2_COUNT + 1
 
-        i = 0
-        count = 0
-        center = int(np.ceil(LED_1_COUNT/2))
-        top = LED_1_COUNT - center
+            colors = np.zeros([LED_2COUNT_ADJ, 3], dtype=int)
+
+            i = 0
+            count = 0
+            center = int(np.ceil(LED_2COUNT_ADJ/2))
+            top = LED_2COUNT_ADJ - center
+
         for stripe in self.stripe_list:
             stripe['width'] += self.zoom_rate * stripe['width'] * dt
 
@@ -263,13 +307,17 @@ class Sparkle(VisualizerBase):
         VisualizerBase.__init__(self)
         self.bounder = Bounder()
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         a = sample_array[-500:]
         m = np.max(a) # get the maximum amplitude
         m = self.bounder.update_and_normalize(m) # normalize the amplitude to [0,1]
         m = max(m**3 * 0.5, - 0.05, 0.01)
-        mask = np.random.rand(LED_1_COUNT) < m
-        colors = np.random.randint(0,255, [LED_1_COUNT, 3])
+        if channel == 1:
+            mask = np.random.rand(LED_1_COUNT) < m
+            colors = np.random.randint(0,255, [LED_1_COUNT, 3])
+        elif channel == 2:
+            mask = np.random.rand(LED_2_COUNT) < m
+            colors = np.random.randint(0,255, [LED_2_COUNT, 3])
         return mask[:, None] * colors
 
 
@@ -288,17 +336,19 @@ class Retro(VisualizerBase):
         self.floater = 0
         self.max_maker = masker.bottom_up
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
             m = np.max(sample_array[-8:]) # get the maximum amplitude
             m = self.bounder.update_and_normalize(m) # normalize the amplitude to [0,1]
             m = np.log(self.smoother.smooth(np.exp(m+2)))-2 # and smooth it
 
-            color_mask = self.mask_maker(m) # create a mask of which LEDS to turn on
+            color_mask = self.mask_maker(m, channel) # create a mask of which LEDS to turn on
             color_array = color_mask * self.color
 
             self.floater = max(self.floater - self.descent_rate, m) # get the position of the floater
-            floater_index = max(int((LED_1_COUNT-1) * self.floater), self.fade_size) # make it an index
-
+            if channel == 1:
+                floater_index = max(int((LED_1_COUNT-1) * self.floater), self.fade_size) # make it an index
+            if channel == 2:
+                floater_index = max(int((LED_2_COUNT-1) * self.floater), self.fade_size) # make it an index
             # and replace a stripe of colors below that index
             i = floater_index - self.fade_size + 1
             j = floater_index + 1
@@ -315,16 +365,25 @@ class SamMode(VisualizerBase):
         self.counter = 0
         self.t = time.time()
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         tt = time.time()
         dt = tt - self.t
         self.t = tt
         self.counter += dt * 3.
-        color_array = np.zeros([LED_1_COUNT,3], dtype=int)
+        if channel == 1:
+            color_array = np.zeros([LED_1_COUNT,3], dtype=int)
 
-        half_way = int(np.floor(LED_1_COUNT/2.0))
-        indices = np.arange(half_way)/4. + self.counter
-        b = np.zeros(LED_1_COUNT)
+            half_way = int(np.floor(LED_1_COUNT/2.0))
+            indices = np.arange(half_way)/4. + self.counter
+            b = np.zeros(LED_1_COUNT)
+
+        elif channel == 2:
+            color_array = np.zeros([LED_2_COUNT,3], dtype=int)
+
+            half_way = int(np.floor(LED_2_COUNT/2.0))
+            indices = np.arange(half_way)/4. + self.counter
+            b = np.zeros(LED_2_COUNT)
+
         b[:half_way] = indices
         b[-half_way:] = np.flipud(indices)
 
@@ -352,19 +411,22 @@ class Pancakes(VisualizerBase):
 
         self.pancakes_colors = (1-lam) * self.color + lam * self.pancake_color
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
             m = np.max(sample_array[-500:]) # get the maximum amplitude
             m = self.bounder.update_and_normalize(m) # normalize the amplitude to [0,1]
             m = self.smoother.smooth(m) # and smooth it
 
             new_pos = self.positions - self.velocities
             lower_bound = np.arange(self.num_cakes)
-            level = int((LED_1_COUNT - self.num_cakes) * m)
+            if channel == 1:
+                level = int((LED_1_COUNT - self.num_cakes) * m)
+            elif channel == 2:
+                level = int((LED_2_COUNT - self.num_cakes) * m)
             levels = level + np.arange(self.num_cakes)
 
             self.positions = np.max([new_pos, levels, lower_bound], axis=0)
 
-            color_mask = self.mask_maker(m) # create a mask of which LEDS to turn on
+            color_mask = self.mask_maker(m, channel) # create a mask of which LEDS to turn on
             color_array = color_mask * self.color
             color_array[self.positions.astype(int),:] = self.pancakes_colors
 
@@ -390,7 +452,7 @@ class Stones(VisualizerBase):
         self.prev_t = time.time()
         self.prev_m = 0
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
             # update the time
             t = time.time()
             dt = t - self.prev_t
@@ -413,9 +475,12 @@ class Stones(VisualizerBase):
             self.positions = np.min([np.ones(self.num_stones), self.positions], axis=0)
 
 
-            color_mask = self.mask_maker(m) # create a mask of which LEDS to turn on
+            color_mask = self.mask_maker(m, channel) # create a mask of which LEDS to turn on
             color_array = color_mask * self.color
-            color_array[((LED_1_COUNT - 1) * self.positions).astype(int),:] = self.stone_color
+            if channel == 1:
+                color_array[((LED_1_COUNT - 1) * self.positions).astype(int),:] = self.stone_color
+            elif channel == 2:
+                color_array[((LED_2_COUNT - 1) * self.positions).astype(int),:] = self.stone_color
 
             # create a color array to be sent to the LED_writer
             return color_array
@@ -425,21 +490,30 @@ class Blocks(VisualizerBase):
     def __init__(self):
         VisualizerBase.__init__(self)
         self.bounder = Bounder()
-        self.color_array = np.zeros([LED_1_COUNT, 3])
+        #self.color_array = np.zeros([LED_1_COUNT, 3])
         self.decay_rate = 0.95
         self.max_window_size = 80
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
 
 
         m = self.bounder.update_and_normalize(np.max(sample_array[-50:]))
-
+        if channel == 1:
+            self.color_array = np.zeros([LED_1_COUNT, 3])
+            position = np.random.randint(LED_1_COUNT)
+        elif channel == 2:
+            self.color_array = np.zeros([LED_2_COUNT, 3])
+            position = np.random.randint(LED_2_COUNT)
         # window_size = max(0,np.random.randn() * 8 + 8)
         window_size = int(m**3 * self.max_window_size)
-        position = np.random.randint(LED_1_COUNT)
+        #position = np.random.randint(LED_1_COUNT)
 
         start = max(0, int(position - window_size/2))
-        end = min(LED_1_COUNT-1, int(position + window_size/2))
+        if channel == 1:
+            end = min(LED_1_COUNT-1, int(position + window_size/2))
+        elif channel == 2:
+            end = min(LED_2_COUNT-1, int(position + window_size/2))
+
         color = np.random.rand(3) * 255 * m
 
         self.color_array *= self.decay_rate
@@ -457,9 +531,12 @@ class Pillars(FFTVisualizerBase):
         self.smoother = SplitExponentialMovingAverage( 0.2, 0.6, np.zeros(self.num_bins))
         self.required_samples = 2000
         self.fft_setup(0, 1500, 2000)
-        self.bin_comparison = np.tile(np.linspace(0, 1, LED_1_COUNT), [self.num_bins, 1]).T
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
+        if channel == 1:
+            self.bin_comparison = np.tile(np.linspace(0, 1, LED_1_COUNT), [self.num_bins, 1]).T
+        elif channel == 2:
+            self.bin_comparison = np.tile(np.linspace(0, 1, LED_2_COUNT), [self.num_bins, 1]).T
         fft = self.fft(sample_array)
         n = fft.shape[0]
         n -= n % self.num_bins # make n divisible by the number of bins
@@ -494,7 +571,7 @@ class Planets(FFTVisualizerBase):
         self.fft_setup(0, 1500, 2000)
         self.tt = 0
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
         fft = self.fft(sample_array)
 
         n = fft.shape[0]
@@ -577,7 +654,7 @@ class Rain(FFTVisualizerBase):
             self.vel[i] = 0
             self.drop_colors[i,:] = self.color * (np.random.rand() * 0.4 + 0.1)**2
 
-    def visualize(self, sample_array):
+    def visualize(self, sample_array, channel):
 
         m = self.bounder.update_and_normalize(np.max(sample_array[-500:]))
         m = self.smoother.smooth(m)
@@ -589,13 +666,19 @@ class Rain(FFTVisualizerBase):
         if np.random.rand() > 0.9: self.add_drop()
 
         brightness = 0.6+ m*0.6
-        color_array = np.zeros([LED_1_COUNT, 3])
+        if channel == 1:
+            color_array = np.zeros([LED_1_COUNT, 3])
+        elif channel == 2:
+            color_array = np.zeros([LED_2_COUNT, 3])
 
         self.pos += self.vel * dt
         self.vel += self.accel * dt
 
         # [ledcount x num_drops]
-        brightness_contributions = gaussian(np.arange(LED_1_COUNT)[:, None], (self.pos * LED_1_COUNT)[None, :], 0.5)
+        if channel == 1:
+            brightness_contributions = gaussian(np.arange(LED_1_COUNT)[:, None], (self.pos * LED_1_COUNT)[None, :], 0.5)
+        elif channel == 2:
+            brightness_contributions = gaussian(np.arange(LED_1_COUNT)[:, None], (self.pos * LED_2_COUNT)[None, :], 0.5)
         color_array = np.matmul(brightness_contributions, self.drop_colors) * brightness
 
         return np.clip(color_array, 0, 255).astype(int)

@@ -1,7 +1,7 @@
 import numpy as np
 from config import *
 
-def bottom_up(m):
+def bottom_up(m, channel):
     '''
     Creates a mask of which leds to turn on given an amplitude.
     This mask lights a strip of LEDs starting at the bottom and reaching higher
@@ -13,10 +13,14 @@ def bottom_up(m):
     Returns:
         A [LED_1_COUNT x 3] array of zeros and ones
     '''
-    num_leds_on = m * LED_1_COUNT
-    return np.tile(np.arange(LED_1_COUNT) < num_leds_on, (3,1)).T
+    if channel == 1:
+        num_leds_on = m * LED_1_COUNT
+        return np.tile(np.arange(LED_1_COUNT) < num_leds_on, (3,1)).T
+    elif channel == 2:
+        num_leds_on = m * LED_2_COUNT
+        return np.tile(np.arange(LED_2_COUNT) < num_leds_on, (3,1)).T
 
-def bottom_upV(m):
+def bottom_upV(m, channel):
     '''
     Creates a mask of which leds to turn on given an amplitude.
     This mask lights a strip of LEDs starting at the bottom and reaching higher
@@ -28,11 +32,14 @@ def bottom_upV(m):
     Returns:
         A [LED_1_COUNT] array of zeros and ones
     '''
-    num_leds_on = m * LED_1_COUNT
-    return np.tile(np.abs(np.arange(LED_1_COUNT/3)) < num_leds_on/3-0.01, (3,1)).T
+    if channel == 1:
+        num_leds_on = m * LED_1_COUNT
+        return np.tile(np.abs(np.arange(LED_1_COUNT/3)) < num_leds_on/3-0.01, (3,1)).T
+    elif channel == 2:
+        num_leds_on = m * LED_2_COUNT
+        return np.tile(np.abs(np.arange(LED_2_COUNT/3)) < num_leds_on/3-0.01, (3,1)).T
 
-
-def top_down(m):
+def top_down(m, channel):
     '''
     Creates a mask of which leds to turn on given an amplitude.
     This mask lights a strip of LEDs starting at the top and reaching lower
@@ -44,10 +51,14 @@ def top_down(m):
     Returns:
         A [LED_1_COUNT x 3] array of zeros and ones
     '''
-    num_leds_on = m * LED_1_COUNT
-    return np.tile(LED_1_COUNT - np.arange(LED_1_COUNT) < num_leds_on, (3,1)).T
+    if channel == 1:
+        num_leds_on = m * LED_1_COUNT
+        return np.tile(LED_1_COUNT - np.arange(LED_1_COUNT) < num_leds_on, (3,1)).T
+    elif channel == 2:
+        num_leds_on = m * LED_2_COUNT
+        return np.tile(LED_2_COUNT - np.arange(LED_2_COUNT) < num_leds_on, (3,1)).T
 
-def middle_out(m):
+def middle_out(m, channel):
     '''
     Creates a mask of which leds to turn on given an amplitude.
     This mask lights a strip of LEDs starting at the middle and reaching out
@@ -59,10 +70,14 @@ def middle_out(m):
     Returns:
         A [LED_1_COUNT x 3] array of zeros and ones
     '''
-    num_leds_on = m * LED_1_COUNT
-    return np.tile(np.abs(LED_1_COUNT/2.0 - np.arange(LED_1_COUNT)) < num_leds_on/2., (3,1)).T
+    if channel == 1:
+        num_leds_on = m * LED_1_COUNT
+        return np.tile(np.abs(LED_1_COUNT/2.0 - np.arange(LED_1_COUNT)) < num_leds_on/2., (3,1)).T
+    elif channel == 2:
+        num_leds_on = m * LED_2_COUNT
+        return np.tile(np.abs(LED_2_COUNT/2.0 - np.arange(LED_2_COUNT)) < num_leds_on/2., (3,1)).T
 
-def clamp(m):
+def clamp(m, channel):
     '''
     Creates a mask of which leds to turn on given an amplitude.
     This mask lights a strip of LEDs starting at the top and bottom and reaching towards
@@ -74,5 +89,9 @@ def clamp(m):
     Returns:
         A [LED_1_COUNT x 3] array of zeros and ones
     '''
-    num_leds_on = (1. - m) * LED_1_COUNT
-    return 1 - np.tile(np.abs(LED_1_COUNT/2.0 - np.arange(LED_1_COUNT)) < num_leds_on/2., (3,1)).T
+    if channel == 1:
+        num_leds_on = (1. - m) * LED_1_COUNT
+        return 1 - np.tile(np.abs(LED_1_COUNT/2.0 - np.arange(LED_1_COUNT)) < num_leds_on/2., (3,1)).T
+    elif channel == 2:
+        num_leds_on = (1. - m) * LED_2_COUNT
+        return 1 - np.tile(np.abs(LED_2_COUNT/2.0 - np.arange(LED_2_COUNT)) < num_leds_on/2., (3,1)).T
