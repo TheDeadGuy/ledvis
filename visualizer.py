@@ -81,6 +81,16 @@ class StripsOff(VisualizerBase):
             color_array = np.zeros([LED_2_COUNT,3], dtype=int)
         return color_array
 
+class Fixed(VisualizerBase):
+        
+
+    def visualize(self, sample_array, channel):
+        if channel == 1:
+            color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
+        elif channel == 2:
+            color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
+        return color_array
+
 
 class VooMeter(VisualizerBase):
     def __init__(self, color=np.array([120, 200, 100]), mask_maker=masker.bottom_upV):
@@ -697,7 +707,8 @@ vis_list = [StripsOff,
             VooMeter,
             Pillars,
             Planets,
-            Rain]
+            Rain,
+            Fixed]
 
 ###################################################################################################
 # Experimental stuff
