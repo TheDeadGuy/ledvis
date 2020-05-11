@@ -113,6 +113,65 @@ class Fixed(VisualizerBase):
             print('Status Code {}'.format(response.status_code))
         return colour_array
 
+class Fade(VisualizerBase):
+    def __init__(self):
+        VisualizerBase.__init__(self)
+        self.colour_timings = 0.4
+        self.first_time = 1
+	self.z = 0
+	self.z_comp = 0
+	self.red = 0
+	self.green = 0
+	self.blue = 255
+
+    def visualize(self, sample_array, channel):
+		if self.first_time == 1:
+			self.red = 0
+			self.green = 0
+			self.blue = 255
+			self.first_time = 0
+
+		if self.z_comp == 0:
+			self.z = self.z + 1
+			self.blue = 255 - self.z
+			self.red = self.z
+			if self.z == 255:
+				self.z_comp = 1
+			time.sleep(self.colour_timings)
+		if self.z_comp == 1:
+			self.z = self.z - 1
+			self.red = self.z
+			self.green = 255 - self.z
+			if self.z == 0:
+				self.z_comp = 2
+			time.sleep(self.colour_timings)
+		if self.z_comp == 2:
+			self.z = self.z + 1
+			self.green = 255 - self.z
+			self.blue = self.z
+			if self.z == 255:
+				self.z_comp = 3
+			time.sleep(self.colour_timings)
+		if self.z_comp == 3:
+			self.z = self.z - 1
+			self.red = 255 - self.z
+			if self.z == 0:
+				self.z_comp = 4
+			time.sleep(self.colour_timings)
+		if self.z_comp == 4:
+			self.z = self.z + 1
+			self.red = 255 - self.z
+			if self.z == 255:
+				self.z_comp = 0
+				self.z = 0
+			time.sleep(self.colour_timings)
+
+		if channel == 1:
+	                colour_array = np.array([[self.blue,self.red,self.green],]*LED_1_COUNT)
+		elif channel == 2:
+	                colour_array = np.array([[self.blue,self.red,self.green],]*LED_2_COUNT)
+                return colour_array
+
 
 
 
@@ -732,6 +791,7 @@ vis_list = [StripsOff,
             Pillars,
             Planets,
             Rain,
+            Fade,
             Fixed]
 
 ###################################################################################################
