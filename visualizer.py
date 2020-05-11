@@ -190,6 +190,24 @@ class VooMeter(VisualizerBase):
 
     def visualize(self, sample_array, channel):
 
+            if WEBPAGEOVRIDE == 1:
+                url = 'http://127.0.0.1:5000/get_colour'
+
+                try:
+                    response = requests.get(url)
+                except requests.ConnectionError:
+                    print('Request failed 2.')
+
+                if response.ok:
+                    data = response.json()
+                    FlaRed = int(data['FlaRed'])
+                    FlaGreen = int(data['FlaGreen'])
+                    FlaBlue = int(data['FlaBlue'])
+                    #print(FlaRed, FlaGreen, FlaBlue)
+                    self.color = np.array([FlaBlue,FlaRed,FlaGreen])
+                else:
+                    print('Status Code {}'.format(response.status_code))
+
             m = np.max(sample_array[-300:]) # get the maximum amplitude
             m = self.bounder.update_and_normalize(m) # normalize the amplitude to [0,1]
             m = self.smoother.smooth(m) # and smooth it
