@@ -168,7 +168,7 @@ def settings_getter(settings_array):
         try:
             response = requests.get(url)
         except requests.ConnectionError:
-            print('Request failed.')
+            print('Request failed. 1')
             continue
 
         if response.ok:

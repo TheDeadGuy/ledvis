@@ -3,6 +3,7 @@ import masker
 import time
 from config import *
 from sound_processing import *
+import requests
 
 
 class VisualizerBase:
@@ -85,11 +86,34 @@ class Fixed(VisualizerBase):
         
 
     def visualize(self, sample_array, channel):
-        if channel == 1:
-            color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
-        elif channel == 2:
-            color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
-        return color_array
+        #if channel == 1:
+        #    color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
+        #elif channel == 2:
+        #    color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
+        #return color_array
+        # do a get request to the server
+        url = 'http://127.0.0.1:5000/get_colour'
+
+        try:
+            response = requests.get(url)
+        except requests.ConnectionError:
+            print('Request failed 2.')
+
+        if response.ok:
+            data = response.json()
+            FlaRed = int(data['FlaRed'])
+            FlaGreen = int(data['FlaGreen'])
+            FlaBlue = int(data['FlaBlue'])
+            #print(FlaRed, FlaGreen, FlaBlue)
+            if channel == 1:
+                colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_1_COUNT)
+            elif channel == 2:
+                colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_2_COUNT)
+        else:
+            print('Status Code {}'.format(response.status_code))
+        return colour_array
+
+
 
 
 class VooMeter(VisualizerBase):
