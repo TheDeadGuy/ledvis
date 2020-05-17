@@ -83,35 +83,37 @@ class StripsOff(VisualizerBase):
         return color_array
 
 class Fixed(VisualizerBase):
-        
 
     def visualize(self, sample_array, channel):
-        #if channel == 1:
-        #    color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
-        #elif channel == 2:
-        #    color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
-        #return color_array
-        # do a get request to the server
-        url = 'http://127.0.0.1:5000/get_colour'
-
-        try:
-            response = requests.get(url)
-        except requests.ConnectionError:
-            print('Request failed 2.')
-
-        if response.ok:
-            data = response.json()
-            FlaRed = int(data['FlaRed'])
-            FlaGreen = int(data['FlaGreen'])
-            FlaBlue = int(data['FlaBlue'])
-            #print(FlaRed, FlaGreen, FlaBlue)
+        if WEBPAGEOVERIDE == 0:
             if channel == 1:
-                colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_1_COUNT)
+                color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
             elif channel == 2:
-                colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_2_COUNT)
-        else:
-            print('Status Code {}'.format(response.status_code))
-        return colour_array
+                color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
+            return color_array
+	elif WEBPAGEOVERIDE == 1:
+            #do a get request to the server
+            url = 'http://127.0.0.1:5000/get_colour'
+
+            try:
+                response = requests.get(url)
+            except requests.ConnectionError:
+                print('Request failed 2.')
+
+            if response.ok:
+                data = response.json()
+                FlaRed = int(data['FlaRed'])
+                FlaGreen = int(data['FlaGreen'])
+                FlaBlue = int(data['FlaBlue'])
+                #print(FlaRed, FlaGreen, FlaBlue)
+                if channel == 1:
+                    colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_1_COUNT)
+                elif channel == 2:
+                    colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_2_COUNT)
+            else:
+                print('Status Code {}'.format(response.status_code))
+            return colour_array
+
 
 class Fade(VisualizerBase):
     def __init__(self):
@@ -171,6 +173,19 @@ class Fade(VisualizerBase):
 		elif channel == 2:
 	                colour_array = np.array([[self.blue,self.red,self.green],]*LED_2_COUNT)
                 return colour_array
+
+class FadeSlide(VisualizerBase):
+    def __init__(self):
+        VisualizerBase.__init__(self)
+        self.x = 0
+        self.colour_timings = 0.2
+        self.color_array = np.array([[159,0,0],[143,0,0],[127,16,0],[111,32,0],[95,48,0],[79,64,0],[63,80,0],[47,96,0],[31,112,0],[15,128,0],[0,144,0],[0,175,0],[0,159,0],[0,143,0],[0,127,16],[0,111,32],[0,95,48],[0,79,64],[0,63,80],[0,47,96],[0,31,112],[0,15,128],[0,0,144],[0,0,160],[0,0,159],[0,0,143],[16,0,127],[32,0,111],[48,0,95],[64,0,79],[80,0,63],[96,0,47],[112,0,31],[128,0,15],[144,0,0],[160,0,0]])
+        #self.color_array = np.array([[255,0,0],[239,0,0],[223,0,0],[207,0,0],[191,0,0],[175,0,0],[159,0,0],[143,0,0],[127,16,0],[111,32,0],[95,48,0],[79,64,0],[63,80,0],[47,96,0],[31,112,0],[15,128,0],[0,144,0],[0,160,0],[0,176,0],[0,192,0],[0,208,0],[0,224,0],[0,240,0],[0,255,0],[0,239,0],[0,223,0],[0,207,0],[0,191,0],[0,175,0],[0,159,0],[0,143,0],[0,127,16],[0,111,32],[0,95,48],[0,79,64],[0,63,80],[0,47,96],[0,31,112],[0,15,128],[0,0,144],[0,0,160],[0,0,176],[0,0,192],[0,0,208],[0,0,224],[0,0,240],[0,0,255],[0,0,239],[0,0,223],[0,0,207],[0,0,191],[0,0,175],[0,0,159],[0,0,143],[16,0,127],[32,0,111],[48,0,95],[64,0,79],[80,0,63],[96,0,47],[112,0,31],[128,0,15],[144,0,0],[160,0,0],[176,0,0],[192,0,0],[208,0,0],[224,0,0],[240,0,0],[255,0,0]])
+
+    def visualize(self, sample_array, channel):
+         self.color_array = np.roll(self.color_array, 1, axis=0)
+         time.sleep(self.colour_timings)
+         return(self.color_array)
 
 
 
@@ -810,7 +825,8 @@ vis_list = [StripsOff,
             Planets,
             Rain,
             Fade,
-            Fixed]
+            Fixed,
+            FadeSlide]
 
 ###################################################################################################
 # Experimental stuff

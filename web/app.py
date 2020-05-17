@@ -33,9 +33,12 @@ def handle_data():
     if request.method == 'POST':
        #result = request.form
        #return render_template("result.html",result = result)
-       FlaRed = request.form['Red']
-       FlaGreen = request.form['Green']
-       FlaBlue = request.form['Blue']
+       if request.form['Red'] != "":
+           FlaRed = request.form['Red']
+       if request.form['Green'] != "":
+           FlaGreen = request.form['Green']
+       if request.form['Blue'] != "":
+           FlaBlue = request.form['Blue']
        #return render_template("result.html",result = result)
        return render_template('index.html')
 

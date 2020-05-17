@@ -26,15 +26,15 @@
 		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 10)">Pillars</button>
 		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 11)">Planets</button>
 		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 12)">Rain</button>
-		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 13)">Fade(Non Sound Influenced)</button>
+		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 13)">Fade</button>
 		<button type="button" class="btn btn-light btn-lg" onclick="btnClick(this, 14)">Colour Setting (Set Below)</button>
 
     </div>
     <div>
     <form action="/rgb_sender" method="post">
-        <label>Red:</label><input type="text" name="Red">
-        <label>Green:</label><input type="text" name="Green">
-        <label>Blue:</label><input type="text" name="Blue">
+        <label>Red:</label><input type="text" pattern="\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b" name="Red">
+        <label>Green:</label><input type="text" pattern="\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b" name="Green">
+        <label>Blue:</label><input type="text" pattern="\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b" name="Blue">
         <input type="submit">
     </form>
     </div>

@@ -20,6 +20,7 @@ VOOMETER_GREEN = 0       # Between 0 and 255
 VOOMETER_BLUE  = 255     # Between 0 and 255
 
 #STRIPS FIXED COLOUR (Now obsolete. Incorporated into webpage)
+WEBPAGEOVERIDE = 1       # 0 for no. 1 for yes. If 1 values below become redundant
 FIXED_RED      = 255     # Between 0 and 255
 FIXED_GREEN    = 0       # Between 0 and 255
 FIXED_BLUE     = 255     # Between 0 and 255
