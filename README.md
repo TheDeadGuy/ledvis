@@ -1,4 +1,6 @@
 # ledvis install
+
+Install all requirements & dependencies @ https://github.com/TheDeadGuy/ledvis#requirments first
 ```
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
@@ -13,7 +15,7 @@ sudo systemctl start flask.service ledvis.service
 
 `sudo` is needed because this we are starting a system service
 
-## Requirments
+## Requirements
 
 This is meant to run on a Raspberry Pi. (original author used pi 3. I'm using pi 4)
 
@@ -51,11 +53,9 @@ sudo apt install screen python-matplotlib python-pyaudio		# get screen
 
 ## To get it to run automatically on the Pi
 
-Run the following commands
+Run the following commands:
 
 ```
-cd /home/pi/ledvis/Services
-cp * /etc/systemd/system/
 sudo systemctl enable flask.service ledvis.service
 ```
  
