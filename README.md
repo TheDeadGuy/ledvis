@@ -11,11 +11,11 @@ To run use following command:
 sudo systemctl start flask.service ledvis.service
 ```
 
-`sudo` is needed because this we are interfacing with the GPIO and PWM through the rpi_ws281x library.
+`sudo` is needed because this we are starting a system service
 
 ## Requirments
 
-This is meant to run on a Raspberry Pi.
+This is meant to run on a Raspberry Pi. (original author used pi 3. I'm using pi 4)
 
  * rpi_ws281x
  * adafruit-ads1x15
