@@ -5,8 +5,9 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/ledvis/web
-ExecStart=/bin/bash -c "python3 app.py"
+ExecStart=/bin/bash -c "python3 -u app.py"
 PIDFile=/tmp/flask.pid
+User=root
 
 [Install]
 WantedBy=multi-user.target
