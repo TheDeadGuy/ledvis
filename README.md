@@ -5,7 +5,7 @@ Install all requirements & dependencies @ https://github.com/TheDeadGuy/ledvis#r
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
 cd /home/pi/ledvis/Services
-cp * /etc/systemd/system/
+sudo cp * /etc/systemd/system/
 ```
 
 To run use following command:
