@@ -1,0 +1,12 @@
+[Unit]
+Description=ledvis Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/ledvis/web
+ExecStart=/usr/bin/python3 app.py
+PIDFile=/tmp/flask.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=ledvis Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/ledvis
+ExecStart=/usr/bin/python2.7 run.py
+PIDFile=/tmp/ledvis.pid
+
+[Install]
+WantedBy=multi-user.target
