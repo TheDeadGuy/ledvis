@@ -1,8 +1,14 @@
-# ledvis
+# ledvis install
 ```
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
-Raspberry Pi LED music visualizer. Use `screen -c pi.screenrc` to run.
+cd /home/pi/ledvis/Services
+cp * /etc/systemd/system/
+```
+
+To run use following command:
+```
+sudo systemctl start flask.service ledvis.service
 ```
 
 `sudo` is needed because this we are interfacing with the GPIO and PWM through the rpi_ws281x library.
@@ -45,9 +51,11 @@ sudo apt install screen python-matplotlib python-pyaudio		# get screen
 
 ## To get it to run automatically on the Pi
 
-Add the following to `/etc/rc.local` right above the `exit 0` line
+Run the following commands
 
 ```
-su - pi -c "screen -dm -S ledvis -c /home/pi/ledvis/pi.screenrc"
+cd /home/pi/ledvis/Services
+cp * /etc/systemd/system/
+sudo systemctl enable flask.service ledvis.service
 ```
  
