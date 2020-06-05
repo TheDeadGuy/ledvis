@@ -5,8 +5,9 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/ledvis
-ExecStart=/usr/bin/python2.7 run.py
+ExecStart=/bin/bash -c "python -u run.py"
 PIDFile=/tmp/ledvis.pid
+User=root
 
 [Install]
 WantedBy=multi-user.target
