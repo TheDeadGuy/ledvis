@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/ledvis/web
-ExecStart=/usr/bin/python3 app.py
+ExecStart=/bin/bash -c "python3 app.py"
 PIDFile=/tmp/flask.pid
 
 [Install]
