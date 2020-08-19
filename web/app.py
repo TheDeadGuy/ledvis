@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, session, request, url_for
 import socket
 import json
 
+olstate = 9
 state = 0
 FlaRed = 0
 FlaGreen = 0
@@ -12,18 +13,21 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+        return render_template('index.html')
 
 
 @app.route('/btn_click')
 def btn_click():
-	global state
-	state = request.args['vis_index']
-	return render_template('index.html')
+        global state
+        global olstate
+        if request.args['vis_index'] != 0:
+            olstate = request.args['vis_index']
+        state = request.args['vis_index']
+        return render_template('index.html')
 
 @app.route('/get_settings', methods=['GET'])
 def get_settings():
-	return json.dumps({'vis_index': state})
+        return json.dumps({'vis_index': state})
 
 @app.route('/rgb_sender', methods=['POST', 'GET'])
 def handle_data():
@@ -47,6 +51,18 @@ def handle_data():
 def get_colour():
 	return json.dumps({'FlaRed': FlaRed,'FlaGreen': FlaGreen,'FlaBlue': FlaBlue})
 
+@app.route('/on')
+def on():
+    global state
+    global olstate
+    state = olstate
+    return "Okay"
+
+@app.route('/off')
+def off():
+    global state
+    state = 0
+    return "Okay"
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0')
+        app.run(host='0.0.0.0')
