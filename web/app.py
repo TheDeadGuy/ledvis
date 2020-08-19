@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, request
+from flask import Flask, redirect, render_template, session, request, url_for
 import socket
 import json
 
@@ -40,7 +40,8 @@ def handle_data():
        if request.form['Blue'] != "":
            FlaBlue = request.form['Blue']
        #return render_template("result.html",result = result)
-       return render_template('index.html')
+       #return render_template('index.html')
+       return redirect(url_for('index'))
 
 @app.route('/get_colour', methods=['GET'])
 def get_colour():
