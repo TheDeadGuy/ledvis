@@ -1,6 +1,7 @@
 [Unit]
 Description=ledvis Service
 After=network.target
+PartOf=ledvis.service
 
 [Service]
 Type=simple

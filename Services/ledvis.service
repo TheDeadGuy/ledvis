@@ -1,6 +1,7 @@
 [Unit]
 Description=ledvis Service
 After=network.target
+Wants=flask.service
 
 [Service]
 Type=simple
@@ -8,6 +9,8 @@ WorkingDirectory=/home/pi/ledvis
 ExecStart=/bin/bash -c "python -u run.py"
 PIDFile=/tmp/ledvis.pid
 User=root
+StandardOutput=/var/log/ledvis/LedvisSOlog.log
+StandardError=/var/log/ledvis/LedvisSElog.log  
 
 [Install]
 WantedBy=multi-user.target
