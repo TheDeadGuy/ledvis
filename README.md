@@ -10,7 +10,7 @@ sudo cp * /etc/systemd/system/
 
 To run use following command:
 ```
-sudo systemctl start flask.service ledvis.service
+sudo systemctl start ledvis.service
 ```
 
 `sudo` is needed because this we are starting a system service
@@ -56,6 +56,6 @@ sudo apt install screen python-matplotlib python-pyaudio		# get screen
 Run the following commands:
 
 ```
-sudo systemctl enable flask.service ledvis.service
+sudo systemctl enable ledvis.service
 ```
  
