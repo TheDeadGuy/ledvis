@@ -1,6 +1,6 @@
 # ledvis install
 
-Install all requirements & dependencies @ https://github.com/TheDeadGuy/ledvis#requirments first
+Install all requirements & dependencies @ https://github.com/TheDeadGuy/ledvis#requirements first
 ```
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
