@@ -58,4 +58,7 @@ Run the following commands:
 ```
 sudo systemctl enable ledvis.service
 ```
- 
+
+I also found that one of the PWM channels wasn't initializing properly. To fix this i used the following entry in ```\boot\config.txt```
+```dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4```
+
