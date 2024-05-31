@@ -26,21 +26,14 @@ This is meant to run on a Raspberry Pi. (original author used pi 3. I'm using pi
  * screen
  * Flask
 
-Run this to install the rpi_ws281x (LED) driver library
+Run this to install the rpi_ws281x (LED) driver library (Be aware that this goes against best practices. If you want this done correctly. the package needs to be done under venv)
 ```
-cd ~
-git clone https://github.com/TheDeadGuy/rpi_ws281x.git
-sudo apt install scons swig cmake pip
-cd rpi_ws281x
-scons
-cd python
-sudo -H python setup.py build
-sudo -H python setup.py install
+sudo pip3 install rpi_ws281x --break-system-packages
 ```
 
-And run this to install the other dependencies - The pip command may need to be ran in a venv depending on your OS version.
+And run this to install the other dependencies - (Be aware that this goes against best practices. If you want this done correctly. the package needs to be done under venv)
 ```
-pip install adafruit-ads1x15 --user	# install the ADS1015 i2c library
+pip install adafruit-ads1x15 --user --break-system-packages	# install the ADS1015 i2c library
 sudo apt install screen python3-matplotlib python3-pyaudio python3-requests python3-flask		# get screen
 ```
 
