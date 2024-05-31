@@ -28,18 +28,18 @@ Run this to install the rpi_ws281x (LED) driver library
 ```
 cd ~
 git clone https://github.com/jgarff/rpi_ws281x.git
-sudo apt install scons swig
+sudo apt install scons swig cmake pip
 cd rpi_ws281x
 scons
-cd python
-sudo -H python setup.py build
-sudo -H python setup.py install
+cmake -D BUILD_SHARED=ON -D BUILD_TEST=OFF
+cmake --build .
+sudo make install
 ```
 
 And run this to install the other dependencies
 ```
 pip install adafruit-ads1x15 --user	# install the ADS1015 i2c library
-sudo apt install screen python-matplotlib python-pyaudio python-requests python3-flask		# get screen
+sudo apt install screen python3-matplotlib python3-pyaudio python3-requests python3-flask		# get screen
 ```
 
 ## Repo Organization
