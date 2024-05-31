@@ -61,4 +61,8 @@ sudo systemctl enable ledvis.service
 I also found that one of the PWM channels wasn't initializing properly. To fix this i used the following entry in ```\boot\config.txt```
 ```dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4```
 
+refer to: https://forums.raspberrypi.com/viewtopic.php?t=311130
+or /boot/overlays/README
+for dtoverlay settings applicable for you pins
+
 If you have issues with it complaining about audio channels. it may be that the default audio device is being used. run "pyaudio_test.py" to get the device number and remember to put that in your config.py file
