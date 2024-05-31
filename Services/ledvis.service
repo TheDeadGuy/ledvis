@@ -5,7 +5,7 @@ Wants=flask.service
 
 [Service]
 Type=simple
-WorkingDirectory=/home/pi/ledvis
+WorkingDirectory=/home/<username>/ledvis
 ExecStart=/bin/bash -c "python -u run.py"
 PIDFile=/tmp/ledvis.pid
 User=root
