@@ -29,13 +29,13 @@ This is meant to run on a Raspberry Pi. (original author used pi 3. I'm using pi
 Run this to install the rpi_ws281x (LED) driver library
 ```
 cd ~
-git clone https://github.com/jgarff/rpi_ws281x.git
+git clone https://github.com/TheDeadGuy/rpi_ws281x.git
 sudo apt install scons swig cmake pip
 cd rpi_ws281x
 scons
-cmake -D BUILD_SHARED=ON -D BUILD_TEST=OFF
-cmake --build .
-sudo make install
+cd python
+sudo -H python setup.py build
+sudo -H python setup.py install
 ```
 
 And run this to install the other dependencies - The pip command may need to be ran in a venv depending on your OS version.
