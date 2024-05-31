@@ -37,6 +37,11 @@ pip install adafruit-ads1x15 --user --break-system-packages	# install the ADS101
 sudo apt install screen python3-matplotlib python3-pyaudio python3-requests python3-flask		# get screen
 ```
 
+We also need to disable audio taking ownership of PWM. to do this run this command
+```
+echo "blacklist snd_bcm2835" | sudo tee /etc/modprobe.d/alsa-blacklist.conf
+```
+
 ## Repo Organization
 
  * **run.py** contains execture three processes: one to sample the ADC, one to process the data, and one to write to the LEDs
