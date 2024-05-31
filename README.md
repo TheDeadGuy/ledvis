@@ -36,7 +36,7 @@ cmake --build .
 sudo make install
 ```
 
-And run this to install the other dependencies
+And run this to install the other dependencies - The pip command may need to be ran in a venv depending on your OS version.
 ```
 pip install adafruit-ads1x15 --user	# install the ADS1015 i2c library
 sudo apt install screen python3-matplotlib python3-pyaudio python3-requests python3-flask		# get screen
