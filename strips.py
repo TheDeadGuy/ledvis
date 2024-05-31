@@ -1,5 +1,6 @@
 from neopixel import *
 from config import *
+from rpi_ws281x import Adafruit_NeoPixel, Color
 import numpy as np
 import time
 
@@ -8,6 +9,8 @@ class Strips:
     def __init__(self):
         self.strip1 = Adafruit_NeoPixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL)
         self.strip2 = Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL) # IZZY: strip2 disabled
+#        self.strip1 = neopixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL)
+#        self.strip2 = neopixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL) # IZZY: strip2 disabled
         self.strip1.begin()
         self.strip2.begin() # IZZY: strip2 disabled
 
@@ -40,6 +43,7 @@ class Strips:
 class StripR:
     def __init__(self):
         self.strip1 = Adafruit_NeoPixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL)
+#        self.strip1 = neopixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL)
         self.strip1.begin()
 
         self.prev_write_time = time.time()
@@ -65,6 +69,7 @@ class StripR:
 class StripL:
     def __init__(self):
         self.strip2 = Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL) # IZZY: strip2 disabled
+#        self.strip2 = neopixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL) # IZZY: strip2 disabled
         self.strip2.begin() # IZZY: strip2 disabled
 
         self.prev_write_time = time.time()
