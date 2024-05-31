@@ -1,4 +1,5 @@
 # ledvis install
+(Excuse me for the unordered readme. it's a mix of previous owner and me)
 
 Install all requirements & dependencies @ https://github.com/TheDeadGuy/ledvis#requirements first
 ```
@@ -9,7 +10,6 @@ cd ~/ledvis/Services
 sed -i -e "s/<username>/"$USER"/g" ledvis.service flask.service
 sudo cp * /etc/systemd/system/
 ```
-
 To run use following command:
 ```
 sudo systemctl start ledvis.service
@@ -61,3 +61,4 @@ sudo systemctl enable ledvis.service
 I also found that one of the PWM channels wasn't initializing properly. To fix this i used the following entry in ```\boot\config.txt```
 ```dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4```
 
+If you have issues with it complaining about audio channels. it may be that the default audio device is being used. run "pyaudio_test.py" to get the device number and remember to put that in your config.py file
