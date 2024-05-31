@@ -6,6 +6,7 @@ cd ~
 git clone https://github.com/TheDeadGuy/ledvis.git
 cd ledvis
 cd ~/ledvis/Services
+sed -i -e "s/<username>/"$USER"/g" ledvis.service flask.service
 sudo cp * /etc/systemd/system/
 ```
 
