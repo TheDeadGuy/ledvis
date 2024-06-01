@@ -87,9 +87,9 @@ class Fixed(VisualizerBase):
     def visualize(self, sample_array, channel):
         if WEBPAGEOVERIDE == 0:
             if channel == 1:
-                color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_1_COUNT)
+                color_array = np.array([[FIXED_RED,FIXED_BLUE,FIXED_GREEN],]*LED_1_COUNT)
             elif channel == 2:
-                color_array = np.array([[FIXED_BLUE,FIXED_RED,FIXED_GREEN],]*LED_2_COUNT)
+                color_array = np.array([[FIXED_RED,FIXED_BLUE,FIXED_GREEN],]*LED_2_COUNT)
             return color_array
         elif WEBPAGEOVERIDE == 1:
             #do a get request to the server
@@ -107,9 +107,9 @@ class Fixed(VisualizerBase):
                 FlaBlue = int(data['FlaBlue'])
                 #print(FlaRed, FlaGreen, FlaBlue)
                 if channel == 1:
-                    colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_1_COUNT)
+                    colour_array = np.array([[FlaRed,FlaBlue,FlaGreen],]*LED_1_COUNT)
                 elif channel == 2:
-                    colour_array = np.array([[FlaBlue,FlaRed,FlaGreen],]*LED_2_COUNT)
+                    colour_array = np.array([[FlaRed,FlaBlue,FlaGreen],]*LED_2_COUNT)
             else:
                 print('Status Code {}'.format(response.status_code))
             return colour_array
@@ -197,7 +197,7 @@ class VooMeter(VisualizerBase):
         if VOOMETER_RAND == 1:
             self.color = np.random.randint(low=0, high=255, size=3)
         elif VOOMETER_RAND == 0:
-            self.color = np.array([VOOMETER_BLUE,VOOMETER_RED,VOOMETER_GREEN])
+            self.color = np.array([VOOMETER_RED,VOOMETER_BLUE,VOOMETER_GREEN])
         self.mask_maker = mask_maker
         self.smoother = SplitExponentialMovingAverage(0.2, 0.7)
         self.bounder = Bounder()
@@ -220,7 +220,7 @@ class VooMeter(VisualizerBase):
                     FlaGreen = int(data['FlaGreen'])
                     FlaBlue = int(data['FlaBlue'])
                     #print(FlaRed, FlaGreen, FlaBlue)
-                    self.color = np.array([FlaBlue,FlaRed,FlaGreen])
+                    self.color = np.array([FlaRed,FlaBlue,FlaGreen])
                 else:
                     print('Status Code {}'.format(response.status_code))
 
